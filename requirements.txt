@@ -2,3 +2,4 @@ flask
 requests
 beautifulsoup4
 lxml
+selenium==4.5.0
