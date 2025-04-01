@@ -4,6 +4,7 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+import os
 
 app = Flask(__name__)
 
@@ -58,4 +59,5 @@ def buscar_producto():
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    port = os.getenv('PORT', 5000)  # Usa el puerto de Render si está disponible, de lo contrario 5000
+    app.run(debug=True, host='0.0.0.0', port=port)  # Escucha en todas las interfaces y en el puerto adecuado
