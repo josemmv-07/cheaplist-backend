@@ -58,6 +58,10 @@ def buscar_producto():
         driver.quit()
         return jsonify({'error': str(e)}), 500
 
+@app.route('/')
+def index():
+    return jsonify({"mensaje": "Bienvenido a la API de CheapList!"})
+
 if __name__ == '__main__':
-    port = os.getenv('PORT', 5000)  # Usa el puerto de Render si está disponible, de lo contrario 5000
+    port = os.getenv('PORT', 10000)  # Usa el puerto de Render si está disponible, de lo contrario 10000
     app.run(debug=True, host='0.0.0.0', port=port)  # Escucha en todas las interfaces y en el puerto adecuado
