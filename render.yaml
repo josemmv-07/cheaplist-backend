@@ -8,6 +8,8 @@ services:
       wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
       dpkg -i google-chrome-stable_current_amd64.deb || apt-get -fy install
       rm -f google-chrome-stable_current_amd64.deb
+      # Verificar si chrome está instalado y si no está, instalarlo
+      which google-chrome || (wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && dpkg -i google-chrome-stable_current_amd64.deb)
       pip install -r requirements.txt
     startCommand: python app.py
     envVars:

@@ -7,8 +7,24 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 import os
+import subprocess
 
 app = Flask(__name__)
+
+# 🛠️ Instalar Google Chrome en tiempo real si no está
+def setup_google_chrome():
+    if not os.path.exists("/usr/bin/google-chrome-stable"):
+        print("Instalando Google Chrome en tiempo de ejecución...")
+        subprocess.run([
+            "wget", "https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb"
+        ])
+        subprocess.run([
+            "sudo", "dpkg", "-i", "google-chrome-stable_current_amd64.deb"
+        ])
+        subprocess.run([
+            "sudo", "apt-get", "-fy", "install"
+        ])
+        subprocess.run(["rm", "-f", "google-chrome-stable_current_amd64.deb"])
 
 @app.route('/buscar', methods=['GET'])
 def buscar_producto():
@@ -16,8 +32,11 @@ def buscar_producto():
     if not nombre_producto:
         return jsonify({'error': 'Falta el parámetro "producto"'}), 400
 
+    # 👇 Instala Google Chrome si hace falta
+    setup_google_chrome()
+
     options = Options()
-    options.binary_location = "/usr/bin/google-chrome"  # 👈 IMPORTANTE para que Render encuentre Chrome
+    options.binary_location = "/usr/bin/google-chrome-stable"  # 👈 IMPORTANTE para que Render encuentre Chrome
     options.add_argument("--headless")
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
