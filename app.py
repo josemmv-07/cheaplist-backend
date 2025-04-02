@@ -5,8 +5,23 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import os
+import subprocess
 
 app = Flask(__name__)
+
+# 🛠️ Descargar ChromeDriver si no existe en el sistema (para Render)
+def setup_chromedriver():
+    if not os.path.exists("/usr/local/bin/chromedriver"):
+        print("Descargando ChromeDriver en tiempo de ejecución...")
+        subprocess.run([
+            "wget", "-O", "chromedriver.zip",
+            "https://storage.googleapis.com/chromedriver/114.0.5735.90/chromedriver_linux64.zip"
+        ])
+        subprocess.run(["unzip", "chromedriver.zip"])
+        subprocess.run(["mv", "chromedriver", "/usr/local/bin/chromedriver"])
+        subprocess.run(["chmod", "+x", "/usr/local/bin/chromedriver"])
+        subprocess.run(["rm", "-f", "chromedriver.zip"])
+
 
 @app.route('/buscar', methods=['GET'])
 def buscar_producto():
@@ -19,7 +34,8 @@ def buscar_producto():
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
 
-    # 🔧 Importante para Render: le decimos exactamente dónde está ChromeDriver
+    setup_chromedriver()  # 👈 Instalación dinámica aquí
+
     driver = webdriver.Chrome(executable_path="/usr/local/bin/chromedriver", options=options)
 
     try:
@@ -59,9 +75,11 @@ def buscar_producto():
     finally:
         driver.quit()
 
+
 @app.route('/')
 def index():
     return jsonify({"mensaje": "Bienvenido a la API de CheapList!"})
+
 
 if __name__ == '__main__':
     port = int(os.getenv('PORT', 10000))
