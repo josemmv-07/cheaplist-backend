@@ -4,7 +4,6 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.chrome.service import Service
 import os
 
 app = Flask(__name__)
@@ -15,6 +14,7 @@ def buscar_producto():
     if not nombre_producto:
         return jsonify({'error': 'Falta el parámetro "producto"'}), 400
 
+    # Configuración de opciones para Chromium en Docker
     options = Options()
     options.binary_location = "/usr/bin/chromium"
     options.add_argument("--headless")
@@ -24,7 +24,8 @@ def buscar_producto():
     options.add_argument("--window-size=1920,1080")
     options.add_argument("--remote-debugging-port=9222")
 
-    driver = webdriver.Chrome(options=options)
+    # Usar chromedriver instalado en la imagen
+    driver = webdriver.Chrome(executable_path="/usr/bin/chromedriver", options=options)
 
     try:
         url = f"https://tienda.mercadona.es/search-results/?query={nombre_producto}"
