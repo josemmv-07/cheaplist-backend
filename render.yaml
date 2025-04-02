@@ -3,9 +3,20 @@ services:
     name: cheaplist-backend
     env: python
     buildCommand: |
-      apt-get update
-      apt-get install -y chromium chromium-driver
-      pip install -r requirements.txt
+      apt-get update && \
+      apt-get install -y \
+        chromium \
+        chromium-driver \
+        fonts-liberation \
+        libnss3 \
+        libgconf-2-4 \
+        libxss1 \
+        libappindicator1 \
+        libindicator7 \
+        wget \
+        curl \
+        gnupg2 && \
+      pip install --no-cache-dir -r requirements.txt
     startCommand: gunicorn app:app
     envVars:
       - key: PORT

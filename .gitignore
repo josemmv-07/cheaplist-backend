@@ -1,4 +1,4 @@
-# Entorno virtual
+# Entornos virtuales
 venv/
 .env
 
@@ -18,9 +18,11 @@ LICENSE.chromedriver
 google-chrome-stable_current_amd64.deb
 wget-log
 
-# Archivos de sistema/editor
+# Configuración de IDEs
+.vscode/
+.idea/
+
+# Archivos del sistema
 .DS_Store
 *.swp
 *.swo
-.vscode/
-.idea/

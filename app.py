@@ -13,8 +13,9 @@ app = Flask(__name__)
 def buscar_producto():
     nombre_producto = request.args.get('producto')
     if not nombre_producto:
-        return jsonify({'error': 'Falta el parámetro \"producto\"'}), 400
+        return jsonify({'error': 'Falta el parámetro "producto"'}), 400
 
+    print("🔧 Preparando Selenium...")
     options = Options()
     options.binary_location = "/usr/bin/chromium"
     options.add_argument("--headless")
@@ -24,17 +25,19 @@ def buscar_producto():
     options.add_argument("--window-size=1920,1080")
     options.add_argument("--remote-debugging-port=9222")
 
-    # ✅ ESTA ES LA FORMA CORRECTA
-    service = Service("/usr/bin/chromedriver")
-    driver = webdriver.Chrome(service=service, options=options)
-
     try:
+        service = Service("/usr/bin/chromedriver")
+        print("🚀 Lanzando navegador...")
+        driver = webdriver.Chrome(service=service, options=options)
+
         url = f"https://tienda.mercadona.es/search-results/?query={nombre_producto}"
+        print(f"🌐 Abriendo URL: {url}")
         driver.get(url)
 
         WebDriverWait(driver, 10).until(
             EC.presence_of_element_located((By.CLASS_NAME, "product-cell"))
         )
+        print("✅ Página cargada correctamente")
 
         productos_divs = driver.find_elements(By.CLASS_NAME, "product-cell")
         productos = []
@@ -44,26 +47,34 @@ def buscar_producto():
                 nombre = div.find_element(By.CLASS_NAME, "product-cell__description-name").text
                 precio_texto = div.find_element(By.CLASS_NAME, "product-price__unit-price").text
                 precio = float(precio_texto.replace("€", "").replace(",", ".").strip())
+                print(f"🛒 Producto encontrado: {nombre} - {precio}€")
                 productos.append({
                     "nombre": nombre,
                     "precio": precio,
                     "supermercado": "Mercadona"
                 })
-            except Exception:
+            except Exception as e:
+                print(f"❌ Error en un producto: {e}")
                 continue
 
         if not productos:
+            print("⚠️ No se encontraron productos.")
             return jsonify({'mensaje': 'Producto no encontrado'}), 404
 
         producto_mas_barato = sorted(productos, key=lambda x: x["precio"])[0]
+        print(f"💸 Producto más barato: {producto_mas_barato}")
         return jsonify(producto_mas_barato)
 
     except Exception as e:
-        print(f"Error durante el scraping: {str(e)}")
+        print(f"🔥 Error durante el scraping: {str(e)}")
         return jsonify({'error': str(e)}), 500
 
     finally:
-        driver.quit()
+        print("🧹 Cerrando navegador...")
+        try:
+            driver.quit()
+        except:
+            pass
 
 @app.route('/')
 def index():
