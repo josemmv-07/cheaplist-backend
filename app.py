@@ -19,13 +19,13 @@ def buscar_producto():
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
 
-    driver = webdriver.Chrome(options=options)
+    # 🔧 Importante para Render: le decimos exactamente dónde está ChromeDriver
+    driver = webdriver.Chrome(executable_path="/usr/local/bin/chromedriver", options=options)
 
     try:
         url = f"https://tienda.mercadona.es/search-results/?query={nombre_producto}"
         driver.get(url)
 
-        # Espera hasta que se carguen los productos (máximo 10s)
         WebDriverWait(driver, 10).until(
             EC.presence_of_element_located((By.CLASS_NAME, "product-cell"))
         )
@@ -53,7 +53,7 @@ def buscar_producto():
         return jsonify(producto_mas_barato)
 
     except Exception as e:
-        print(f"Error durante el scraping: {str(e)}")  # Para ver errores en los logs
+        print(f"Error durante el scraping: {str(e)}")
         return jsonify({'error': str(e)}), 500
 
     finally:
@@ -64,5 +64,5 @@ def index():
     return jsonify({"mensaje": "Bienvenido a la API de CheapList!"})
 
 if __name__ == '__main__':
-    port = int(os.getenv('PORT', 10000))  # Usa el puerto de Render si está disponible
-    app.run(debug=True, host='0.0.0.0', port=port)  # Escucha en todas las interfaces
+    port = int(os.getenv('PORT', 10000))
+    app.run(debug=True, host='0.0.0.0', port=port)
