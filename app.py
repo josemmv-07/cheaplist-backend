@@ -13,7 +13,7 @@ app = Flask(__name__)
 def buscar_producto():
     nombre_producto = request.args.get('producto')
     if not nombre_producto:
-        return jsonify({'error': 'Falta el parámetro "producto"'}), 400
+        return jsonify({'error': 'Falta el parámetro \"producto\"'}), 400
 
     options = Options()
     options.binary_location = "/usr/bin/chromium"
@@ -24,7 +24,7 @@ def buscar_producto():
     options.add_argument("--window-size=1920,1080")
     options.add_argument("--remote-debugging-port=9222")
 
-    # ✅ Este es el fix
+    # ✅ ESTA ES LA FORMA CORRECTA
     service = Service("/usr/bin/chromedriver")
     driver = webdriver.Chrome(service=service, options=options)
 
