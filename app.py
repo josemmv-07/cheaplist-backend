@@ -17,6 +17,7 @@ def buscar_producto():
         return jsonify({'error': 'Falta el parámetro "producto"'}), 400
 
     options = Options()
+    options.binary_location = "/usr/bin/google-chrome"  # 👈 IMPORTANTE para que Render encuentre Chrome
     options.add_argument("--headless")
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
