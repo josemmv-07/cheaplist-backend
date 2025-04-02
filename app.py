@@ -46,8 +46,6 @@ def buscar_producto():
             except Exception:
                 continue
 
-        driver.quit()
-
         if not productos:
             return jsonify({'mensaje': 'Producto no encontrado'}), 404
 
@@ -55,13 +53,16 @@ def buscar_producto():
         return jsonify(producto_mas_barato)
 
     except Exception as e:
-        driver.quit()
+        print(f"Error durante el scraping: {str(e)}")  # Para ver errores en los logs
         return jsonify({'error': str(e)}), 500
+
+    finally:
+        driver.quit()
 
 @app.route('/')
 def index():
     return jsonify({"mensaje": "Bienvenido a la API de CheapList!"})
 
 if __name__ == '__main__':
-    port = os.getenv('PORT', 10000)  # Usa el puerto de Render si está disponible, de lo contrario 10000
-    app.run(debug=True, host='0.0.0.0', port=port)  # Escucha en todas las interfaces y en el puerto adecuado
+    port = int(os.getenv('PORT', 10000))  # Usa el puerto de Render si está disponible
+    app.run(debug=True, host='0.0.0.0', port=port)  # Escucha en todas las interfaces
