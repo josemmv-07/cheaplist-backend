@@ -7,14 +7,30 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 import os
+import subprocess
 
 app = Flask(__name__)
+
+# 🛠️ Instalar Google Chrome en tiempo real si no está
+def setup_google_chrome():
+    if not os.path.exists("/usr/bin/google-chrome"):
+        print("Instalando Google Chrome en tiempo de ejecución...")
+        subprocess.run([
+            "wget", "https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb"
+        ])
+        subprocess.run([
+            "apt", "install", "-y", "./google-chrome-stable_current_amd64.deb"
+        ])
+        subprocess.run(["rm", "-f", "google-chrome-stable_current_amd64.deb"])
 
 @app.route('/buscar', methods=['GET'])
 def buscar_producto():
     nombre_producto = request.args.get('producto')
     if not nombre_producto:
         return jsonify({'error': 'Falta el parámetro "producto"'}), 400
+
+    # 👇 Instala Google Chrome si hace falta
+    setup_google_chrome()
 
     options = Options()
     options.add_argument("--headless")
@@ -62,11 +78,9 @@ def buscar_producto():
     finally:
         driver.quit()
 
-
 @app.route('/')
 def index():
     return jsonify({"mensaje": "Bienvenido a la API de CheapList!"})
-
 
 if __name__ == '__main__':
     port = int(os.getenv('PORT', 10000))

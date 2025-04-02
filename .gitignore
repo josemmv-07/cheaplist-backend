@@ -1,7 +1,19 @@
+# Entorno virtual
 venv/
+
+# Archivos temporales de Python
 __pycache__/
 *.pyc
+
+# Archivos innecesarios del scraping/setup
 *.zip
+*.log
+chromedriver
 chromedriver_linux64.zip
 LICENSE.chromedriver
+google-chrome-stable_current_amd64.deb
 wget-log
+
+# Archivos del sistema/editor
+.DS_Store
+*.swp
