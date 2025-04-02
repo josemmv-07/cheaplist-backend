@@ -9,7 +9,7 @@ services:
       which google-chrome || (wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && dpkg -i google-chrome-stable_current_amd64.deb)
       rm -f google-chrome-stable_current_amd64.deb
       pip install -r requirements.txt
-    startCommand: python app.py
+    startCommand: python3 app.py   # Asegurarse de usar python3
     envVars:
       - key: PORT
         value: 10000
